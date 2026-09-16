@@ -1,6 +1,7 @@
 import nflreadpy as nfl
 import pandas as pd
 
+K = 20
 STARTING_ELO = 1500
 
 def create_initial_ratings(schedule):
@@ -19,13 +20,45 @@ def update_rating(rating, expected, actual, k):
     new_rating = rating + k * (actual - expected)
     return new_rating 
 
+
+def update_game(home_rating, away_rating, home_won, k):
+    # 1. each team's expected score (note the reversed argument order)
+    home_expected = expected_score(home_rating, away_rating)
+    away_expected = expected_score(away_rating, home_rating)
+
+    # 2. turn "did home win?" into actual scores for both
+    home_actual = 1 if home_won else 0
+    away_actual = 1 - home_actual
+
+    # 3. update each team with your existing function
+    new_home = update_rating(home_rating, home_expected, home_actual, k)
+    new_away = update_rating(away_rating, away_expected, away_actual, k)
+
+    # 4. hand both back
+    return new_home, new_away
+
+
+def run_season(schedule, k):
+    ratings = create_initial_ratings(schedule)
+    schedule = schedule.sort_values('gameday')
+
+    for i, game in schedule.iterrows():
+        home = game['home_team']
+        away = game['away_team']
+        home_won = game['home_score'] > game['away_score']
+        ratings[home], ratings[away] = update_game (ratings[home], ratings[away], home_won, k)
+
+    return ratings
+
 # --- run it ---
 schedule = nfl.load_schedules([2025]).to_pandas()
 ratings = create_initial_ratings(schedule)
 print(len(ratings))
 
-# --- test update_rating: equal teams (1500 each), home wins ---
-exp = expected_score(1500, 1500)      # expected = 0.5 for equal teams
-home_new = update_rating(1500, exp, 1, 20)   # home won  → actual = 1
-away_new = update_rating(1500, 1 - exp, 0, 20)  # away lost → actual = 0
-print(home_new, away_new)
+final_ratings = run_season(schedule, K)
+
+# sort teams by rating, highest first
+ranked = sorted(final_ratings.items(), key=lambda x: x[1], reverse=True)
+for team, rating in ranked:
+    print(team, round(rating))
+    
