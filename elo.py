@@ -76,7 +76,17 @@ print(len(ratings))
 
 final_ratings = run_season(schedule, K)
 
+
+home_wins = 0
+for i, game in schedule.iterrows():
+    if game['home_score'] > game['away_score']:
+        home_wins = home_wins + 1
+print("Home win rate:", home_wins / len(schedule))
+
+
+
 # sort teams by rating, highest first
 ranked = sorted(final_ratings.items(), key=lambda x: x[1], reverse=True)
 for team, rating in ranked:
     print(team, round(rating))
+
