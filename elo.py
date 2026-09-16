@@ -41,12 +41,31 @@ def update_game(home_rating, away_rating, home_won, k):
 def run_season(schedule, k):
     ratings = create_initial_ratings(schedule)
     schedule = schedule.sort_values('gameday')
+    correct = 0
+    total = 0
+
+   
+  
+
+
 
     for i, game in schedule.iterrows():
         home = game['home_team']
         away = game['away_team']
         home_won = game['home_score'] > game['away_score']
-        ratings[home], ratings[away] = update_game (ratings[home], ratings[away], home_won, k)
+        
+
+
+        predection = expected_score(ratings[home], ratings[away]) > 0.5
+        if predection == home_won:
+            correct = correct + 1
+        total = total + 1
+
+
+        ratings[home], ratings[away] = update_game(ratings[home], ratings[away], home_won, k)
+
+    accuracy = correct/total 
+    print("Accuracy:", accuracy)    
 
     return ratings
 
@@ -61,4 +80,3 @@ final_ratings = run_season(schedule, K)
 ranked = sorted(final_ratings.items(), key=lambda x: x[1], reverse=True)
 for team, rating in ranked:
     print(team, round(rating))
-    
