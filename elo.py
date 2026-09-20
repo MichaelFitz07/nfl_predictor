@@ -38,15 +38,20 @@ def update_game(home_rating, away_rating, home_won, k):
     return new_home, new_away
 
 
-def run_season(schedule, k):
-    ratings = create_initial_ratings(schedule)
+def regress_to_mean(ratings, regression_amount):
+    regressed = {}
+    for team, rating in ratings.items():
+        regressed[team] = STARTING_ELO + (rating - STARTING_ELO) * (1 - regression_amount)
+    return regressed
+
+
+
+def run_season(schedule, k, ratings=None):
+    if ratings is None:
+        ratings = create_initial_ratings(schedule)
     schedule = schedule.sort_values('gameday')
     correct = 0
     total = 0
-
-   
-  
-
 
 
     for i, game in schedule.iterrows():
@@ -69,24 +74,17 @@ def run_season(schedule, k):
 
     return ratings
 
-# --- run it ---
-schedule = nfl.load_schedules([2025]).to_pandas()
-ratings = create_initial_ratings(schedule)
-print(len(ratings))
+# --- run it: train on 2024, carry over, test on 2025 ---
+schedule_2024 = nfl.load_schedules([2024]).to_pandas()
+schedule_2025 = nfl.load_schedules([2025]).to_pandas()
 
-final_ratings = run_season(schedule, K)
+# 1. run 2024 from scratch -> end-of-2024 ratings
+print("2024 season:")
+ratings_after_2024 = run_season(schedule_2024, K)
 
+# 2. regress toward the mean between seasons
+ratings_start_2025 = regress_to_mean(ratings_after_2024, 0.33)
 
-home_wins = 0
-for i, game in schedule.iterrows():
-    if game['home_score'] > game['away_score']:
-        home_wins = home_wins + 1
-print("Home win rate:", home_wins / len(schedule))
-
-
-
-# sort teams by rating, highest first
-ranked = sorted(final_ratings.items(), key=lambda x: x[1], reverse=True)
-for team, rating in ranked:
-    print(team, round(rating))
-
+# 3. run 2025 STARTING from the carried-over ratings
+print("2025 season (with carry-over):")
+final_ratings = run_season(schedule_2025, K, ratings=ratings_start_2025)
