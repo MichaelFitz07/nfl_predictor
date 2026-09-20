@@ -74,17 +74,10 @@ def run_season(schedule, k, ratings=None):
 
     return ratings
 
-# --- run it: train on 2024, carry over, test on 2025 ---
+# --- train on 2024, carry over, test on 2025 ---
 schedule_2024 = nfl.load_schedules([2024]).to_pandas()
 schedule_2025 = nfl.load_schedules([2025]).to_pandas()
 
-# 1. run 2024 from scratch -> end-of-2024 ratings
-print("2024 season:")
 ratings_after_2024 = run_season(schedule_2024, K)
-
-# 2. regress toward the mean between seasons
-ratings_start_2025 = regress_to_mean(ratings_after_2024, 0.33)
-
-# 3. run 2025 STARTING from the carried-over ratings
-print("2025 season (with carry-over):")
+ratings_start_2025 = regress_to_mean(ratings_after_2024, 0.5)
 final_ratings = run_season(schedule_2025, K, ratings=ratings_start_2025)
