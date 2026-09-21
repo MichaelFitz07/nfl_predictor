@@ -1,5 +1,6 @@
 import nflreadpy as nfl
 import pandas as pd
+import math
 
 K = 20
 STARTING_ELO = 1500
@@ -58,6 +59,8 @@ def run_season(schedule, k, ratings=None):
         home = game['home_team']
         away = game['away_team']
         home_won = game['home_score'] > game['away_score']
+        margin = abs(game['home_score'] - game['away_score'])
+        mov_multiplier = math.log(margin + 1)   
         
 
 
@@ -67,7 +70,7 @@ def run_season(schedule, k, ratings=None):
         total = total + 1
 
 
-        ratings[home], ratings[away] = update_game(ratings[home], ratings[away], home_won, k)
+        ratings[home], ratings[away] = update_game(ratings[home], ratings[away], home_won, k * mov_multiplier)
 
     accuracy = correct/total 
     print("Accuracy:", accuracy)    
