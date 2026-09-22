@@ -1,5 +1,6 @@
 import nflreadpy as nfl
 import pandas as pd
+from xgboost import XGBClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, log_loss
@@ -41,9 +42,9 @@ scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# train the thing
-model = LogisticRegression()
-model.fit(X_train_scaled, y_train)
+# train the model
+model = XGBClassifier(n_estimators=100, max_depth=3, learning_rate=0.1)
+model.fit(X_train_scaled, y_train) 
 
 # predict on 2025 and see how we did
 predictions = model.predict(X_test_scaled)

@@ -50,3 +50,6 @@ A running log of design decisions, experiments, and reasoning behind them.
 
 ## ML LOGIC REGRESSIONS FIRST RESULTS 
 "First ML model (logistic regression) vs Elo baseline on 2025: ML better on accuracy (66% vs 63%) but slightly worse on log loss (0.641 vs 0.633). Split result — ML picks winners better, Elo slightly better calibrated. NOTE: features unscaled (elo_diff in hundreds, div_game 0/1) — likely hurting ML; scaling is next."
+
+## trying different models 
+"tried xgboost (n_est=100, depth=3) vs logistic regression. xgboost did WORSE — 63.2%/0.642 vs 66.3%/0.631. why: signal is basically linear (elo_diff dominates), no real interactions to exploit, and 1100 games isnt enough to stop it overfitting. logistic regression wins. lesson: match model complexity to data + signal, dont default to the fancy one."
