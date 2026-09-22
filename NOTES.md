@@ -46,3 +46,7 @@ A running log of design decisions, experiments, and reasoning behind them.
 - Add log loss as a second metric (accuracy is too coarse to see confidence gains).
 - Build feature table → logistic regression (Elo rating as a feature).
 - Predict live 2026 games.
+- split elo.py into elo.py / features.py / model.py — one job per file. Do once ML experiment is settled.
+
+## ML LOGIC REGRESSIONS FIRST RESULTS 
+"First ML model (logistic regression) vs Elo baseline on 2025: ML better on accuracy (66% vs 63%) but slightly worse on log loss (0.641 vs 0.633). Split result — ML picks winners better, Elo slightly better calibrated. NOTE: features unscaled (elo_diff in hundreds, div_game 0/1) — likely hurting ML; scaling is next."
