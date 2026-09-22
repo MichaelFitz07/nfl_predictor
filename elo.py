@@ -53,34 +53,80 @@ def run_season(schedule, k, ratings=None):
     schedule = schedule.sort_values('gameday')
     correct = 0
     total = 0
-
+    total_log_loss = 0
 
     for i, game in schedule.iterrows():
         home = game['home_team']
         away = game['away_team']
         home_won = game['home_score'] > game['away_score']
         margin = abs(game['home_score'] - game['away_score'])
-        mov_multiplier = math.log(margin + 1)   
-        
+        mov_multiplier = math.log(margin + 1)
 
+        p = expected_score(ratings[home], ratings[away])
 
-        predection = expected_score(ratings[home], ratings[away]) > 0.5
-        if predection == home_won:
+        # accuracy
+        prediction = p > 0.5
+        if prediction == home_won:
             correct = correct + 1
         total = total + 1
 
+        # log loss
+        y = 1 if home_won else 0
+        game_log_loss = -(y * math.log(p) + (1 - y) * math.log(1 - p))
+        total_log_loss = total_log_loss + game_log_loss
 
+        # update ratings last
         ratings[home], ratings[away] = update_game(ratings[home], ratings[away], home_won, k * mov_multiplier)
 
-    accuracy = correct/total 
-    print("Accuracy:", accuracy)    
+    accuracy = correct / total
+    avg_log_loss = total_log_loss / total
+    print("Accuracy:", accuracy)
+    print("Log loss:", avg_log_loss)
 
     return ratings
 
-# --- train on 2024, carry over, test on 2025 ---
+
+def build_feature_table(schedule, ratings=None):
+    if ratings is None:
+        ratings = create_initial_ratings(schedule)
+    schedule = schedule.sort_values('gameday')
+    rows = []                      # collect one dict per game
+
+    for i, game in schedule.iterrows():
+        home = game['home_team']
+        away = game['away_team']
+        home_won = game['home_score'] > game['away_score']
+
+        # capture PRE-GAME features (before any update)
+        elo_diff = ratings[home] - ratings[away]
+
+        rows.append({
+            'elo_diff': elo_diff,
+            'home_rest': game['home_rest'],
+            'away_rest': game['away_rest'],
+            'div_game': game['div_game'],
+            'home_won': 1 if home_won else 0
+        })
+
+        # update ratings AFTER recording the row
+        margin = abs(game['home_score'] - game['away_score'])
+        mov_multiplier = math.log(margin + 1)
+        ratings[home], ratings[away] = update_game(ratings[home], ratings[away], home_won, K * mov_multiplier)
+
+    return pd.DataFrame(rows)
+
+
+# --- train on 2024, carry over, build 2025 feature table ---
 schedule_2024 = nfl.load_schedules([2024]).to_pandas()
 schedule_2025 = nfl.load_schedules([2025]).to_pandas()
 
+# rebuild the carried-over ratings that 2025 should start from
 ratings_after_2024 = run_season(schedule_2024, K)
 ratings_start_2025 = regress_to_mean(ratings_after_2024, 0.5)
-final_ratings = run_season(schedule_2025, K, ratings=ratings_start_2025)
+
+# build the feature table for 2025, starting from those ratings
+feature_table = build_feature_table(schedule_2025, ratings=ratings_start_2025)
+print(feature_table.head())
+print(feature_table.shape)
+
+
