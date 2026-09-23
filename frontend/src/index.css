@@ -50,20 +50,22 @@
   }
 }
 
-body {
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
+/* whole page - dark sporty background, everything centered */
+body {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #0b1e33 0%, #10263f 100%);
+  color: #fff;
+  min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 60px;
 }
 
 h1,

@@ -29,18 +29,34 @@ def home():
 
 @app.get("/predict")
 def predict(home_team: str, away_team: str):
-    # make sure both teams actually exist in our ratings before doing anything
     if home_team not in ratings:
         return {"error": f"unknown home team: {home_team}"}
     if away_team not in ratings:
         return {"error": f"unknown away team: {away_team}"}
+    if home_team == away_team:
+        return {"error": "a team can't play itself"}
 
-    prob = predict_game(home_team, away_team, ratings, model, scaler)
+    home_prob = predict_game(home_team, away_team, ratings, model, scaler)
+
+    margin = estimate_margin(ratings[home_team], ratings[away_team])
+
     return {
         "home_team": home_team,
         "away_team": away_team,
-        "home_win_probability": prob
+       
+        "predicted_margin": margin,
+        "home_win_probability": home_prob,
+        "away_win_probability": 1 - home_prob,          # away is just the flip side
+        "home_rating": round(ratings[home_team]),        # send the elo ratings too
+        "away_rating": round(ratings[away_team]),
     }
+
+# rough predicted score from the elo gap - not exact, just a plausible-looking estimate
+# rough predicted margin from the elo gap - just the gap expressed as points
+def estimate_margin(home_rating, away_rating):
+    margin = (home_rating - away_rating) / 25   # gap -> points
+    return round(margin)
+
 
 # lets the frontend (or anyone) get the list of valid team codes
 @app.get("/teams")
