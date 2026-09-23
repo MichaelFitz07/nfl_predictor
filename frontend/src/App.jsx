@@ -16,19 +16,20 @@ function App() {
     return 'Strong pick'
   }
 
-  // grab the team list once when the page loads
-  useEffect(() => {
-    fetch('http://127.0.0.1:8000/teams')
+    useEffect(() => {
+    fetch(`${API_URL}/teams`)
       .then((response) => response.json())
       .then((data) => setTeams(data.teams))
   }, [])
 
-  // hit the api when predict is clicked
   const handlePredict = () => {
-    fetch(`http://127.0.0.1:8000/predict?home_team=${homeTeam}&away_team=${awayTeam}`)
+    fetch(`${API_URL}/predict?home_team=${homeTeam}&away_team=${awayTeam}`)
       .then((response) => response.json())
       .then((data) => setResult(data))
   }
+
+
+  const API_URL = 'https://nfl-predictor-8yv0.onrender.com'
 
 
   const TEAM_NAMES = {
