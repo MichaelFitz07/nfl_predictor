@@ -1,10 +1,10 @@
 /* the main card everything sits in */
 .card {
   background: #14263d;
-  padding: 40px;
+  padding: 50px;        /* was 40 */
   border-radius: 16px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-  width: 420px;
+  width: 500px;         /* was 420 */
   text-align: center;
   border: 1px solid #1f3a5c;
 }
@@ -12,7 +12,7 @@
 /* title - big and bold with a sporty accent */
 h1 {
   margin: 0 0 30px 0;
-  font-size: 28px;
+  font-size: 34px;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: #ffffff;
