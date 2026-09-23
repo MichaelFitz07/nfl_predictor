@@ -16,9 +16,14 @@ def home():
     return {"message": "nfl predictor api is running"}
 
 
-# the real one - give it two teams, get back a win prob
 @app.get("/predict")
 def predict(home_team: str, away_team: str):
+    # make sure both teams actually exist in our ratings before doing anything
+    if home_team not in ratings:
+        return {"error": f"unknown home team: {home_team}"}
+    if away_team not in ratings:
+        return {"error": f"unknown away team: {away_team}"}
+
     prob = predict_game(home_team, away_team, ratings, model, scaler)
     return {
         "home_team": home_team,
