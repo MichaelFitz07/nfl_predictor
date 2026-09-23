@@ -1,7 +1,18 @@
 from fastapi import FastAPI
 from model import train_everything, predict_game
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+
+# let the react frontend (on port 5173) call this api
+# without this the browser blocks it for security (CORS)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # only allow our frontend, not just anyone
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # train ONCE when the server boots, keep it all in memory
 # (dont wanna retrain on every request, that'd be dead slow)
@@ -30,3 +41,8 @@ def predict(home_team: str, away_team: str):
         "away_team": away_team,
         "home_win_probability": prob
     }
+
+# lets the frontend (or anyone) get the list of valid team codes
+@app.get("/teams")
+def teams():
+    return {"teams": sorted(ratings.keys())}
