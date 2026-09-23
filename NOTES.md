@@ -53,3 +53,6 @@ A running log of design decisions, experiments, and reasoning behind them.
 
 ## trying different models 
 "tried xgboost (n_est=100, depth=3) vs logistic regression. xgboost did WORSE — 63.2%/0.642 vs 66.3%/0.631. why: signal is basically linear (elo_diff dominates), no real interactions to exploit, and 1100 games isnt enough to stop it overfitting. logistic regression wins. lesson: match model complexity to data + signal, dont default to the fancy one."
+
+## steps towards full stack 
+"security plan: match effort to the app (portfolio predictor, no users/payments). priorities: 1) secrets out of repo (.gitignore/.env - already doing), 2) input validation on endpoints, 3) dont leak stack traces, 4) https/rate-limit/CORS at deploy. NOT doing: auth, encryption-at-rest, full audit - no users/sensitive data. apply each in context as we build."
