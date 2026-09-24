@@ -1,6 +1,10 @@
+import pandas as pd
+import nflreadpy as nfl
 from fastapi import FastAPI
-from model import train_everything, predict_game
 from fastapi.middleware.cors import CORSMiddleware
+from model import train_everything, predict_game
+
+
 
 app = FastAPI()
 
@@ -65,3 +69,41 @@ def estimate_margin(home_rating, away_rating):
 @app.get("/teams")
 def teams():
     return {"teams": sorted(ratings.keys())}
+
+
+# returns all games for a given week, each with a prediction
+@app.get("/week")
+def week(week_number: int):
+    # load this season's schedule
+    sched = nfl.load_schedules([2026]).to_pandas()
+
+    # just the games for the requested week
+    games = sched[sched["week"] == week_number]
+
+    results = []
+    for _, game in games.iterrows():
+        home = game["home_team"]
+        away = game["away_team"]
+
+        # skip if we somehow dont have ratings for a team
+        if home not in ratings or away not in ratings:
+            continue
+
+        home_prob = predict_game(home, away, ratings, model, scaler)
+        margin = estimate_margin(ratings[home], ratings[away])
+
+        # was it already played? (blank score = not yet)
+        played = pd.notna(game["home_score"])
+
+        results.append({
+            "home_team": home,
+            "away_team": away,
+            "home_win_probability": home_prob,
+            "away_win_probability": 1 - home_prob,
+            "predicted_margin": margin,
+            "played": bool(played),
+            "home_score": int(game["home_score"]) if played else None,
+            "away_score": int(game["away_score"]) if played else None,
+        })
+
+    return {"week": week_number, "games": results}

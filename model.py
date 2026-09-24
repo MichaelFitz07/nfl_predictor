@@ -7,8 +7,8 @@ from elo import regress_to_mean, create_initial_ratings
 from features import build_feature_table
 
 def train_everything():
-    # grab a few seasons to train on
-    train_seasons = [2021, 2022, 2023, 2024]
+    # train on all completed seasons
+    train_seasons = [2021, 2022, 2023, 2024, 2025]
 
     ratings = None
     train_tables = []
@@ -23,10 +23,6 @@ def train_everything():
 
     train_table = pd.concat(train_tables, ignore_index=True)
 
-    # carry ratings into 2025 so we have current-ish ratings to predict with
-    ratings = regress_to_mean(ratings, 0.5)
-
-    # train the model
     feature_cols = ['elo_diff', 'home_rest', 'away_rest', 'div_game']
     X_train = train_table[feature_cols]
     y_train = train_table['home_won']
@@ -37,7 +33,12 @@ def train_everything():
     model = LogisticRegression()
     model.fit(X_train_scaled, y_train)
 
-    # hand back the 3 things the api needs to make predictions
+    # carry ratings through 2026's played games only (2026 is partly played)
+    sched_2026 = nfl.load_schedules([2026]).to_pandas()
+    played_2026 = sched_2026[sched_2026['home_score'].notna()]
+    ratings = regress_to_mean(ratings, 0.5)
+    build_feature_table(played_2026, ratings=ratings)
+
     return model, scaler, ratings
 
 
@@ -65,5 +66,4 @@ def predict_game(home_team, away_team, ratings, model, scaler):
     # get the probability home wins
     prob = model.predict_proba(game_scaled)[0][1]
     return prob
-
 
