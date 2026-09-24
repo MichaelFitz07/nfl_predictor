@@ -9,7 +9,10 @@ app = FastAPI()
 # without this the browser blocks it for security (CORS)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # only allow our frontend, not just anyone
+    allow_origins=[
+        "http://localhost:5173",              # local dev
+        "https://nfl-predictor-1.onrender.com",   # deployed frontend
+    ],
     allow_methods=["*"],
     allow_headers=["*"],
 )
