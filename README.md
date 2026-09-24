@@ -19,7 +19,7 @@ Pick a home and away team, and the app predicts the home team's win probability,
 Evaluated on the held-out 2025 season:
 - **Accuracy:** 66%
 - **vs "always pick home" baseline:** 53%
-- **vs Elo baseline:** ~63%
+- **vs Elo baseline:** 63% ROUNDED
 - **Log loss:** 0.63
 
 ## How it works
