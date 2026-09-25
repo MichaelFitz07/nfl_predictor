@@ -13,7 +13,7 @@ function WeekPage() {
   const [games, setGames] = useState([])
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:8000/week?week_number=${week}`)
+    fetch(`https://nfl-predictor-8yv0.onrender.com/week?week_number=${week}`)
       .then((r) => r.json())
       .then((data) => setGames(data.games))
   }, [week])

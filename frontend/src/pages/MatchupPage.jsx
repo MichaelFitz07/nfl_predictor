@@ -37,13 +37,13 @@ function MatchupPage() {
   }
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/teams')
+    fetch('https://nfl-predictor-8yv0.onrender.com/teams')
       .then((response) => response.json())
       .then((data) => setTeams(data.teams))
   }, [])
 
   const handlePredict = () => {
-    fetch(`http://127.0.0.1:8000/predict?home_team=${homeTeam}&away_team=${awayTeam}`)
+    fetch(`https://nfl-predictor-8yv0.onrender.com/predict?home_team=${homeTeam}&away_team=${awayTeam}`)
       .then((response) => response.json())
       .then((data) => setResult(data))
   }
