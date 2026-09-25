@@ -15,6 +15,13 @@ const TEAM_NAMES = {
   TEN: 'Tennessee Titans', WAS: 'Washington Commanders',
 }
 
+
+const logoUrl = (team) => {
+  const map = { LA: 'lar', LAC: 'lac', LV: 'lv', WAS: 'wsh', JAX: 'jax' }
+  const code = (map[team] || team).toLowerCase()
+  return `https://a.espncdn.com/i/teamlogos/nfl/500/${code}.png`
+}
+
 function MatchupPage() {
   const [teams, setTeams] = useState([])
   const [homeTeam, setHomeTeam] = useState('')
@@ -89,14 +96,16 @@ function MatchupPage() {
             </div>
           </div>
 
-          <div className="matchup">
+            <div className="matchup">
             <div>
+              <img className="logo-big" src={logoUrl(result.home_team)} alt={result.home_team} />
               <div className="team-code">{result.home_team}</div>
               <div className="team-rating">Elo {result.home_rating}</div>
               <div className="team-label">HOME</div>
             </div>
             <div className="vs">vs</div>
             <div>
+              <img className="logo-big" src={logoUrl(result.away_team)} alt={result.away_team} />
               <div className="team-code">{result.away_team}</div>
               <div className="team-rating">Elo {result.away_rating}</div>
               <div className="team-label">AWAY</div>
