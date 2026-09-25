@@ -29,7 +29,7 @@ function WeekPage() {
         </select>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', width: '100%' }}>
+      <div className="grid">
         {games.map((g, i) => {
           const homePct = Math.round(g.home_win_probability * 100)
           const awayPct = 100 - homePct
