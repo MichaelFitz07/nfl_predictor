@@ -8,7 +8,7 @@ from features import build_feature_table
 
 def train_everything():
     # train on all completed seasons
-    train_seasons = [2021, 2022, 2023, 2024, 2025]
+    train_seasons = [2022, 2023, 2024, 2025]
 
     ratings = None
     train_tables = []

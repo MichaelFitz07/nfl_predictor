@@ -1,30 +1,42 @@
-/* the main card everything sits in */
-.card {
-  background: #14263d;
-  padding: 50px;        /* was 40 */
-  border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-  width: 500px;         /* was 420 */
-  text-align: center;
-  border: 1px solid #1f3a5c;
+body {
+  background: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000000 70%);
 }
 
-/* title - big and bold with a sporty accent */
+/* ===== matchup page card ===== */
+.card {
+  background: linear-gradient(145deg, #1a1a1a 0%, #0a0a0a 100%);
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  width: 420px;
+  text-align: center;
+  border: 1px solid #2a2a2a;
+  margin: 0 auto;
+}
+
 h1 {
   margin: 0 0 30px 0;
-  font-size: 34px;
+  font-size: 28px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   color: #ffffff;
 }
 h1 span {
-  color: #e63946;   /* red accent - the sporty pop */
+  color: #ff4655;
 }
 
 .picker {
   margin-bottom: 20px;
   text-align: left;
   width: 100%;
+}
+.picker label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888;
 }
 
 select {
@@ -33,21 +45,12 @@ select {
   padding: 12px;
   font-size: 16px;
   border-radius: 8px;
-  border: 1px solid #2a4a6e;
-  background: #0b1e33;
+  border: 1px solid #2a2a2a;
+  background: #0d0d0d;
   color: #fff;
   cursor: pointer;
 }
-.picker label {
-  display: block;
-  margin-bottom: 6px;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #8fa8c4;
-}
 
-/* the predict button - big, red, sporty */
 button {
   width: 100%;
   padding: 14px;
@@ -57,33 +60,39 @@ button {
   text-transform: uppercase;
   letter-spacing: 1px;
   color: #fff;
-  background: #e63946;
+  background: linear-gradient(90deg, #ff4655, #b81e2c);
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: filter 0.2s;
 }
 button:hover {
-  background: #c92d3a;
+  filter: brightness(1.15);
 }
 
-/* the result box */
 .result {
   margin-top: 30px;
   padding: 20px;
-  background: #0b1e33;
+  background: #0d0d0d;
   border-radius: 10px;
-  border: 1px solid #1f3a5c;
+  border: 1px solid #2a2a2a;
 }
 .result h2 {
   margin: 0 0 10px 0;
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #8fa8c4;
+  color: #888;
+}
+.confidence {
+  color: #ffc043;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 14px;
+  margin: 0 0 10px 0;
 }
 
-/* the win-chance bar */
 .bar {
   display: flex;
   height: 40px;
@@ -91,23 +100,23 @@ button:hover {
   overflow: hidden;
   margin: 20px 0;
   font-weight: bold;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
 }
 .bar-home {
-  background: #e63946;
+  background: linear-gradient(90deg, #ff4655, #b81e2c);
   display: flex;
   align-items: center;
   justify-content: center;
   min-width: 30px;
 }
 .bar-away {
-  background: #457b9d;
+  background: linear-gradient(90deg, #3d9be0, #1e5f96);
   display: flex;
   align-items: center;
   justify-content: center;
   min-width: 30px;
 }
 
-/* the two teams side by side */
 .matchup {
   display: flex;
   justify-content: space-around;
@@ -117,19 +126,168 @@ button:hover {
 .team-code {
   font-size: 24px;
   font-weight: bold;
+  color: #fff;
 }
 .team-rating {
   font-size: 13px;
-  color: #8fa8c4;
+  color: #888;
   margin-top: 4px;
 }
 .team-label {
   font-size: 11px;
-  color: #8fa8c4;
+  color: #888;
   letter-spacing: 1px;
   margin-top: 2px;
 }
 .vs {
-  color: #8fa8c4;
+  color: #888;
   font-size: 14px;
 }
+.score {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* ===== nav ===== */
+.nav {
+  display: flex;
+  gap: 28px;
+  justify-content: center;
+  padding: 24px;
+  border-bottom: 1px solid #1a1a1a;
+  margin-bottom: 30px;
+}
+.nav a {
+  color: #888;
+  text-decoration: none;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 13px;
+  transition: color 0.2s;
+}
+.nav a:hover {
+  color: #fff;
+}
+
+/* ===== weekly page - shiny black ===== */
+.week-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+.week-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 1px solid #1a1a1a;
+  padding-bottom: 16px;
+  margin-bottom: 28px;
+}
+.week-title {
+  font-size: 40px;
+  letter-spacing: 4px;
+  margin: 0;
+  color: #fff;
+}
+.week-select {
+  width: auto;
+  background: #0d0d0d;
+  border: 1px solid #2a2a2a;
+  color: #fff;
+  padding: 8px 14px;
+}
+
+.gcard {
+  background: linear-gradient(145deg, #1a1a1a 0%, #0a0a0a 100%);
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.gcard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.gcard-teams {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.tm {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #666;
+}
+.tm.fav {
+  color: #ffc043;
+}
+.at {
+  font-size: 12px;
+  color: #555;
+}
+
+.split {
+  display: flex;
+  height: 34px;
+  border-radius: 6px;
+  overflow: hidden;
+  font-family: 'Courier New', monospace;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+.split-home {
+  background: linear-gradient(90deg, #ff4655, #b81e2c);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 26px;
+  transition: width 0.5s ease;
+}
+.split-away {
+  background: linear-gradient(90deg, #3d9be0, #1e5f96);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 26px;
+  transition: width 0.5s ease;
+}
+.pct {
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+  padding: 0 10px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.gcard-foot {
+  margin-top: 12px;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+
+.logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+
+.logo-big {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+
+.res.upcoming { color: #666; }
+.res.hit { color: #3ddc84; }
+.res.miss { color: #ff4655; }

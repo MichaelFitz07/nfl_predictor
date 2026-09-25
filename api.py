@@ -71,6 +71,15 @@ def teams():
     return {"teams": sorted(ratings.keys())}
 
 
+
+# re-pull data and rebuild the model/ratings - called on a schedule to stay current
+@app.get("/refresh")
+def refresh():
+    global model, scaler, ratings
+    model, scaler, ratings = train_everything()
+    return {"status": "refreshed"}
+
+
 # returns all games for a given week, each with a prediction
 @app.get("/week")
 def week(week_number: int):
