@@ -244,6 +244,23 @@ button:hover {
   gap: 14px;
   margin-bottom: 14px;
 }
+
+
+.tracker {
+  position: fixed;
+  top: 12px;
+  right: 16px;
+  background: #111f30;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: #ffc043;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: bold;
+  z-index: 100;
+}
+
 .tm {
   font-size: 22px;
   font-weight: 800;

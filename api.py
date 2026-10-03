@@ -116,3 +116,50 @@ def week(week_number: int):
         })
 
     return {"week": week_number, "games": results}
+
+from elo import create_initial_ratings, regress_to_mean, update_game, expected_score, K
+import math
+
+
+@app.get("/record")
+def record():
+    # rebuild ratings through 2025 (start point for 2026)
+    start_ratings = create_initial_ratings(nfl.load_schedules([2021]).to_pandas())
+    for season in [2021, 2022, 2023, 2024, 2025]:
+        sched = nfl.load_schedules([season]).to_pandas()
+        start_ratings = regress_to_mean(start_ratings, 0.5)
+        played = sched[sched["home_score"].notna()].sort_values("gameday")
+        for _, g in played.iterrows():
+            h, a = g["home_team"], g["away_team"]
+            if h not in start_ratings or a not in start_ratings:
+                continue
+            home_won = g["home_score"] > g["away_score"]
+            margin = abs(g["home_score"] - g["away_score"])
+            mult = math.log(margin + 1)
+            start_ratings[h], start_ratings[a] = update_game(start_ratings[h], start_ratings[a], home_won, K * mult)
+
+    # walk 2026 forward: PREDICT with the ML model before updating
+    start_ratings = regress_to_mean(start_ratings, 0.5)
+    sched_2026 = nfl.load_schedules([2026]).to_pandas()
+    played_2026 = sched_2026[sched_2026["home_score"].notna()].sort_values("gameday")
+
+    correct = 0
+    total = 0
+    for _, g in played_2026.iterrows():
+        h, a = g["home_team"], g["away_team"]
+        if h not in start_ratings or a not in start_ratings:
+            continue
+        # PREDICT with the ML model using ratings BEFORE this game
+        home_prob = predict_game(h, a, start_ratings, model, scaler)
+        model_picks_home = home_prob > 0.5
+        home_won = g["home_score"] > g["away_score"]
+        if model_picks_home == home_won:
+            correct += 1
+        total += 1
+        # THEN update ratings with the result
+        margin = abs(g["home_score"] - g["away_score"])
+        mult = math.log(margin + 1)
+        start_ratings[h], start_ratings[a] = update_game(start_ratings[h], start_ratings[a], home_won, K * mult)
+
+    accuracy = round(correct / total * 100, 1) if total > 0 else 0
+    return {"correct": correct, "total": total, "accuracy": accuracy}

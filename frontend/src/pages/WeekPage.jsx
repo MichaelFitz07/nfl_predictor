@@ -21,7 +21,7 @@ function WeekPage() {
   return (
     <div className="week-wrap">
       <div className="week-head">
-        <h1 className="week-title">WEEK {week}</h1>
+        <h1 className="week-title">GAME WEEK PREDICTIONS {week}</h1>
         <select className="week-select" value={week} onChange={(e) => setWeek(Number(e.target.value))}>
           {Array.from({ length: 18 }, (_, i) => i + 1).map((w) => (
             <option key={w} value={w}>Week {w}</option>
