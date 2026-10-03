@@ -11,6 +11,7 @@ const logoUrl = (team) => {
 function WeekPage() {
   const [week, setWeek] = useState(3)
   const [games, setGames] = useState([])
+  const [record, setRecord] = useState(null)
 
   useEffect(() => {
     fetch(`https://nfl-predictor-8yv0.onrender.com/week?week_number=${week}`)
@@ -18,10 +19,22 @@ function WeekPage() {
       .then((data) => setGames(data.games))
   }, [week])
 
+
+  useEffect(() => {
+    fetch('https://nfl-predictor-8yv0.onrender.com/record')
+      .then((r) => r.json())
+      .then((data) => setRecord(data))
+  }, [])
+
   return (
     <div className="week-wrap">
+      {record && (
+        <div className="tracker">
+          Model: {record.correct} - {record.total - record.correct}
+          </div>
+      )}
       <div className="week-head">
-        <h1 className="week-title">GAME WEEK PREDICTIONS {week}</h1>
+        <h1 className="week-title">GAME WEEK {week}</h1>
         <select className="week-select" value={week} onChange={(e) => setWeek(Number(e.target.value))}>
           {Array.from({ length: 18 }, (_, i) => i + 1).map((w) => (
             <option key={w} value={w}>Week {w}</option>
